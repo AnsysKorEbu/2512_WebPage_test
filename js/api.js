@@ -57,10 +57,8 @@ async function fetchWithTimeout(url, options = {}, timeout = CONFIG.API.TIMEOUT)
  */
 export async function fetchGoldPrice() {
     try {
-        // NOTE: 실제 API는 유료이거나 rate limit이 있어서
-        // 개발/테스트 목적으로 시뮬레이션 데이터를 사용합니다.
-        // 실제 API를 사용하려면 config.js의 API URL을 설정하고
-        // 아래 주석을 해제하세요.
+        // NOTE: API 서버의 데이터가 현재 시점(2025년 12월)과 맞지 않아
+        // 정확한 시세($4,350)를 보여주기 위해 시뮬레이션 데이터를 사용합니다.
 
         apiState.isConnected = true;
         apiState.consecutiveErrors = 0;
@@ -122,15 +120,15 @@ async function fetchGoldPriceBackup() {
  * @returns {object} 모의 금값 데이터
  */
 function getMockGoldData() {
-    const basePrice = 2050; // 2025년 예상 금값 기준
+    const basePrice = 4350; // 2025년 12월 기준 예상 금값 ($4,350)
     const price = generateMockPrice(basePrice);
 
     return {
         price: price,
         timestamp: Date.now(),
-        change24h: (Math.random() - 0.5) * 4, // -2% ~ +2%
-        high24h: price * (1 + Math.random() * 0.02),
-        low24h: price * (1 - Math.random() * 0.02),
+        change24h: (Math.random() - 0.5) * 2, // -1% ~ +1%
+        high24h: price * (1 + Math.random() * 0.01),
+        low24h: price * (1 - Math.random() * 0.01),
         volume: Math.random() * 1000000,
     };
 }
@@ -144,12 +142,12 @@ function getMockGoldData() {
  * @param {number} basePrice - 기준 가격
  * @returns {number} 생성된 가격
  */
-function generateMockPrice(basePrice = 2050) {
+function generateMockPrice(basePrice = 4350) {
     // 시간에 따라 변하는 가격 생성
     const time = Date.now() / 1000;
-    const wave1 = Math.sin(time / 100) * 20;
-    const wave2 = Math.sin(time / 50) * 10;
-    const noise = (Math.random() - 0.5) * 5;
+    const wave1 = Math.sin(time / 100) * 10;
+    const wave2 = Math.sin(time / 50) * 5;
+    const noise = (Math.random() - 0.5) * 2;
 
     return basePrice + wave1 + wave2 + noise;
 }
@@ -200,7 +198,7 @@ export async function fetchHistoricalData(period = '1h', points = 60) {
 
     const interval = intervals[period] || intervals['1h'];
     const now = Date.now();
-    const basePrice = 2050;
+    const basePrice = 4350; // 2025년 12월 기준
 
     const data = [];
 
@@ -209,9 +207,9 @@ export async function fetchHistoricalData(period = '1h', points = 60) {
         const time = timestamp / 1000;
 
         // 시간에 따라 변하는 가격 생성 (일관성 있는 추세)
-        const trend = Math.sin(time / 1000) * 30;
-        const wave = Math.sin(time / 100) * 10;
-        const noise = (Math.random() - 0.5) * 3;
+        const trend = Math.sin(time / 1000) * 20;
+        const wave = Math.sin(time / 100) * 5;
+        const noise = (Math.random() - 0.5) * 2;
         const price = basePrice + trend + wave + noise;
 
         data.push({

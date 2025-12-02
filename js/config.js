@@ -9,8 +9,8 @@
 export const CONFIG = {
     // API 설정
     API: {
-        // Gold API - 무료 실시간 금값 API
-        GOLD_API_URL: 'https://api.metals.live/v1/spot/gold',
+        // Gold API - 무료 실시간 금값 API (CORS 지원)
+        GOLD_API_URL: 'https://api.gold-api.com/price/XAU',
         // 백업 API (CoinGecko의 금 관련 토큰)
         BACKUP_API_URL: 'https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true',
         // 업데이트 간격 (밀리초)
