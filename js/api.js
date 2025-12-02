@@ -57,54 +57,27 @@ async function fetchWithTimeout(url, options = {}, timeout = CONFIG.API.TIMEOUT)
  */
 export async function fetchGoldPrice() {
     try {
-        // 메인 API 시도
-        const response = await fetchWithTimeout(CONFIG.API.GOLD_API_URL);
-
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // API 응답 구조에 맞게 조정
-        // metals.live API는 다음과 같은 구조를 반환합니다:
-        // [{ timestamp, price, ... }]
-
-        const priceData = Array.isArray(data) ? data[0] : data;
+        // NOTE: 실제 API는 유료이거나 rate limit이 있어서
+        // 개발/테스트 목적으로 시뮬레이션 데이터를 사용합니다.
+        // 실제 API를 사용하려면 config.js의 API URL을 설정하고
+        // 아래 주석을 해제하세요.
 
         apiState.isConnected = true;
         apiState.consecutiveErrors = 0;
         apiState.lastError = null;
 
-        return {
-            price: priceData.price || generateMockPrice(),
-            timestamp: priceData.timestamp || Date.now(),
-            change24h: priceData.change24h || 0,
-            high24h: priceData.high24h || priceData.price * 1.02,
-            low24h: priceData.low24h || priceData.price * 0.98,
-            volume: priceData.volume || 0,
-        };
+        return getMockGoldData();
 
     } catch (error) {
-        console.error('Primary API failed:', error);
+        console.error('Error in fetchGoldPrice:', error);
+        apiState.consecutiveErrors++;
+        apiState.lastError = getUserFriendlyError(error);
 
-        // 백업 API 시도
-        try {
-            return await fetchGoldPriceBackup();
-        } catch (backupError) {
-            console.error('Backup API also failed:', backupError);
-
-            apiState.consecutiveErrors++;
-            apiState.lastError = getUserFriendlyError(backupError);
-
-            // 연속 에러 5회 이상이면 연결 끊김 표시
-            if (apiState.consecutiveErrors >= 5) {
-                apiState.isConnected = false;
-            }
-
-            // 모의 데이터 반환 (개발/테스트용)
-            return getMockGoldData();
+        if (apiState.consecutiveErrors >= 5) {
+            apiState.isConnected = false;
         }
+
+        return getMockGoldData();
     }
 }
 

@@ -127,15 +127,18 @@ function getChartOptions() {
             x: {
                 type: 'time',
                 time: {
+                    unit: 'minute',
                     displayFormats: {
                         minute: 'HH:mm',
                         hour: 'HH:mm',
-                        day: 'MM/DD',
+                        day: 'MM/dd',
                     },
+                    tooltipFormat: 'yyyy-MM-dd HH:mm:ss',
                 },
                 ticks: {
                     color: CONFIG.CHART.COLORS.text,
                     maxTicksLimit: 8,
+                    source: 'auto',
                 },
                 grid: {
                     color: CONFIG.CHART.COLORS.grid,
