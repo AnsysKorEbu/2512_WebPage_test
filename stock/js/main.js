@@ -128,7 +128,7 @@ async function loadInitialData() {
         // 과거 데이터 가져오기 및 차트 초기화
         const period = chartModule.getCurrentPeriod();
         const points = CONFIG.CHART.MAX_DATA_POINTS[period] || 60;
-        const historicalData = await api.fetchHistoricalData(period, points);
+        const historicalData = await api.fetchHistoricalData(period, points, appState.currentPrice);
 
         chartModule.initChart('goldChart', historicalData);
 
@@ -246,7 +246,7 @@ async function updateData() {
         updatePriceDisplay(priceData);
 
         // 차트에 새 데이터 포인트 추가
-        chartModule.addDataPoint(priceData.timestamp, priceData.price);
+        chartModule.addDataPoint(Date.now(), priceData.price);
 
         updateConnectionStatus('연결됨', 'connected');
 
@@ -307,7 +307,7 @@ async function handlePeriodChange(event) {
     try {
         // 해당 기간의 과거 데이터 가져오기
         const points = CONFIG.CHART.MAX_DATA_POINTS[period] || 60;
-        const historicalData = await api.fetchHistoricalData(period, points);
+        const historicalData = await api.fetchHistoricalData(period, points, appState.currentPrice);
 
         // 차트 업데이트
         chartModule.updateChart(historicalData);

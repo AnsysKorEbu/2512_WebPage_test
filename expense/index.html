@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker - 스마트 가계부</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <span class="logo-icon">💰</span>
+                    Expense Tracker
+                </h1>
+                <div class="month-selector">
+                    <button id="prevMonth" class="month-btn">◀</button>
+                    <span id="currentMonth" class="current-month">2025년 12월</span>
+                    <button id="nextMonth" class="month-btn">▶</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Summary Cards -->
+        <section class="summary-section">
+            <div class="summary-card income">
+                <div class="summary-icon">📈</div>
+                <div class="summary-content">
+                    <p class="summary-label">수입</p>
+                    <p class="summary-amount" id="totalIncome">₩0</p>
+                </div>
+            </div>
+            <div class="summary-card expense">
+                <div class="summary-icon">📉</div>
+                <div class="summary-content">
+                    <p class="summary-label">지출</p>
+                    <p class="summary-amount" id="totalExpense">₩0</p>
+                </div>
+            </div>
+            <div class="summary-card balance">
+                <div class="summary-icon">💵</div>
+                <div class="summary-content">
+                    <p class="summary-label">잔액</p>
+                    <p class="summary-amount" id="totalBalance">₩0</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="main-layout">
+            <!-- Left Panel - Transaction Form & List -->
+            <section class="transactions-panel">
+                <!-- Add Transaction -->
+                <div class="add-transaction-card">
+                    <h2>새 거래 추가</h2>
+                    <form id="transactionForm" class="transaction-form">
+                        <div class="form-group">
+                            <label>유형</label>
+                            <div class="type-selector">
+                                <button type="button" class="type-btn active" data-type="expense">
+                                    <span>📉</span> 지출
+                                </button>
+                                <button type="button" class="type-btn" data-type="income">
+                                    <span>📈</span> 수입
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>금액</label>
+                                <input type="number" id="amount" placeholder="0" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>날짜</label>
+                                <input type="date" id="date" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>카테고리</label>
+                            <select id="category" required>
+                                <optgroup label="지출">
+                                    <option value="식비">🍽️ 식비</option>
+                                    <option value="교통">🚗 교통</option>
+                                    <option value="쇼핑">🛍️ 쇼핑</option>
+                                    <option value="주거">🏠 주거</option>
+                                    <option value="의료">💊 의료</option>
+                                    <option value="문화">🎬 문화</option>
+                                    <option value="기타">📦 기타</option>
+                                </optgroup>
+                                <optgroup label="수입">
+                                    <option value="급여">💼 급여</option>
+                                    <option value="부수입">💸 부수입</option>
+                                    <option value="투자">📊 투자</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>메모</label>
+                            <input type="text" id="description" placeholder="상세 내용 (선택)" maxlength="50">
+                        </div>
+
+                        <button type="submit" class="btn-submit">추가하기</button>
+                    </form>
+                </div>
+
+                <!-- Transaction List -->
+                <div class="transaction-list-card">
+                    <div class="list-header">
+                        <h2>거래 내역</h2>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">전체</button>
+                            <button class="filter-btn" data-filter="income">수입</button>
+                            <button class="filter-btn" data-filter="expense">지출</button>
+                        </div>
+                    </div>
+                    <ul id="transactionList" class="transaction-list">
+                        <!-- Transactions will be inserted here -->
+                    </ul>
+                    <div id="emptyState" class="empty-state">
+                        <span class="empty-icon">📝</span>
+                        <p>아직 거래 내역이 없습니다</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel - Charts & Stats -->
+            <section class="charts-panel">
+                <!-- Category Chart -->
+                <div class="chart-card">
+                    <h3>카테고리별 지출</h3>
+                    <canvas id="categoryChart"></canvas>
+                    <div id="categoryLegend" class="category-legend"></div>
+                </div>
+
+                <!-- Budget Card -->
+                <div class="budget-card">
+                    <div class="budget-header">
+                        <h3>월 예산</h3>
+                        <button id="setBudgetBtn" class="btn-icon">⚙️</button>
+                    </div>
+                    <div class="budget-amount">
+                        <span id="budgetAmount">₩0</span>
+                    </div>
+                    <div class="budget-progress">
+                        <div class="progress-bar">
+                            <div id="budgetBar" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <p class="budget-status" id="budgetStatus">예산을 설정하세요</p>
+                    </div>
+                </div>
+
+                <!-- Export Button -->
+                <button id="exportBtn" class="btn-export">
+                    <span>📥</span> 데이터 내보내기 (JSON)
+                </button>
+            </section>
+        </div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div class="modal" id="budgetModal">
+        <div class="modal-content">
+            <h3>월 예산 설정</h3>
+            <input type="number" id="budgetInput" placeholder="예산 금액을 입력하세요" min="0">
+            <div class="modal-buttons">
+                <button id="saveBudgetBtn" class="btn-primary">저장</button>
+                <button id="cancelBudgetBtn" class="btn-secondary">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

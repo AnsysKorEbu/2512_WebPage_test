@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="실시간 금값 차트 - 금 시세를 실시간으로 확인하세요">
+    <title>실시간 금값 차트</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <span class="logo-icon">📊</span>
+                    <span class="logo-text">Gold Price Tracker <small
+                            style="font-size: 0.6em; color: #a0aec0; font-weight: normal;">(XAU/USD)</small></span>
+                </h1>
+                <div class="header-controls">
+                    <button id="refreshBtn" class="btn btn-secondary">
+                        <span class="btn-icon">🔄</span>
+                        <span>새로고침</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Price Cards -->
+            <div class="price-cards">
+                <div class="price-card">
+                    <div class="price-card-header">
+                        <span class="price-label">현재가 (USD/g)</span>
+                        <span class="price-badge" id="priceChange">-</span>
+                    </div>
+                    <div class="price-value" id="currentPrice">
+                        <span class="loading-shimmer">Loading...</span>
+                    </div>
+                    <div class="price-footer">
+                        <span class="price-time" id="lastUpdate">-</span>
+                    </div>
+                </div>
+
+                <div class="price-card">
+                    <div class="price-card-header">
+                        <span class="price-label">24시간 고가</span>
+                    </div>
+                    <div class="price-value small" id="highPrice">
+                        <span class="loading-shimmer">-</span>
+                    </div>
+                </div>
+
+                <div class="price-card">
+                    <div class="price-card-header">
+                        <span class="price-label">24시간 저가</span>
+                    </div>
+                    <div class="price-value small" id="lowPrice">
+                        <span class="loading-shimmer">-</span>
+                    </div>
+                </div>
+
+                <div class="price-card">
+                    <div class="price-card-header">
+                        <span class="price-label">거래량</span>
+                    </div>
+                    <div class="price-value small" id="volume">
+                        <span class="loading-shimmer">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>실시간 가격 차트</h2>
+                    <div class="chart-controls">
+                        <button class="time-btn active" data-period="1h">1시간</button>
+                        <button class="time-btn" data-period="4h">4시간</button>
+                        <button class="time-btn" data-period="1d">1일</button>
+                        <button class="time-btn" data-period="1w">1주</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="goldChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-label">연결 상태:</span>
+                    <span class="status-indicator" id="connectionStatus">
+                        <span class="status-dot"></span>
+                        <span class="status-text">연결 중...</span>
+                    </span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">다음 업데이트:</span>
+                    <span id="nextUpdate">-</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2025 Gold Price Tracker | 데이터 제공: 실시간 API</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/config.js"></script>
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/chart.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

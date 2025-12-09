@@ -57,14 +57,36 @@ async function fetchWithTimeout(url, options = {}, timeout = CONFIG.API.TIMEOUT)
  */
 export async function fetchGoldPrice() {
     try {
-        // NOTE: API 서버의 데이터가 현재 시점(2025년 12월)과 맞지 않아
-        // 정확한 시세($4,350)를 보여주기 위해 시뮬레이션 데이터를 사용합니다.
+        // API 호출
+        const response = await fetchWithTimeout(CONFIG.API.GOLD_API_URL);
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // 데이터 유효성 검사
+        if (!data.price) {
+            throw new Error('Invalid data format');
+        }
 
         apiState.isConnected = true;
         apiState.consecutiveErrors = 0;
         apiState.lastError = null;
 
-        return getMockGoldData();
+        // 1g당 가격으로 변환
+        const GRAMS_PER_OUNCE = 31.1034768;
+        const pricePerGram = data.price / GRAMS_PER_OUNCE;
+
+        return {
+            price: pricePerGram,
+            timestamp: new Date(data.updatedAt).getTime() || Date.now(),
+            change24h: data.chp || 0, // API가 제공하는 경우 사용, 없으면 0
+            high24h: (data.price_gram_24k || pricePerGram) * 1.01, // 추정치
+            low24h: (data.price_gram_24k || pricePerGram) * 0.99, // 추정치
+            volume: 0, // API에서 제공하지 않음
+        };
 
     } catch (error) {
         console.error('Error in fetchGoldPrice:', error);
@@ -120,7 +142,10 @@ async function fetchGoldPriceBackup() {
  * @returns {object} 모의 금값 데이터
  */
 function getMockGoldData() {
-    const basePrice = 4350; // 2025년 12월 기준 예상 금값 ($4,350)
+    const GRAMS_PER_OUNCE = 31.1034768;
+    const basePriceOz = 4217; // 2025년 12월 기준 예상 금값 (oz)
+    const basePrice = basePriceOz / GRAMS_PER_OUNCE;
+
     const price = generateMockPrice(basePrice);
 
     return {
@@ -142,7 +167,7 @@ function getMockGoldData() {
  * @param {number} basePrice - 기준 가격
  * @returns {number} 생성된 가격
  */
-function generateMockPrice(basePrice = 4350) {
+function generateMockPrice(basePrice) {
     // 시간에 따라 변하는 가격 생성
     const time = Date.now() / 1000;
     const wave1 = Math.sin(time / 100) * 10;
@@ -187,7 +212,7 @@ export function resetApiStatus() {
  * @param {number} points - 데이터 포인트 수
  * @returns {Array} 과거 가격 데이터
  */
-export async function fetchHistoricalData(period = '1h', points = 60) {
+export async function fetchHistoricalData(period = '1h', points = 60, currentPrice = null) {
     // 실제 과거 데이터 API가 없으므로 모의 데이터 생성
     const intervals = {
         '1h': 60 * 1000,      // 1분
@@ -198,24 +223,53 @@ export async function fetchHistoricalData(period = '1h', points = 60) {
 
     const interval = intervals[period] || intervals['1h'];
     const now = Date.now();
-    const basePrice = 4350; // 2025년 12월 기준
+
+    // 현재 가격이 없으면 기본값 사용
+    let basePrice;
+    if (currentPrice) {
+        basePrice = currentPrice;
+    } else {
+        const GRAMS_PER_OUNCE = 31.1034768;
+        basePrice = 4217 / GRAMS_PER_OUNCE;
+    }
 
     const data = [];
+    let lastPrice = basePrice;
 
-    for (let i = points - 1; i >= 0; i--) {
+    // 현재 시점부터 과거로 역산하여 데이터 생성 (Random Walk)
+    // i=0일 때(현재)는 basePrice를 그대로 사용하고, 과거로 갈수록 변동을 적용
+
+    // 가장 최신 데이터 (현재)
+    data.unshift({
+        timestamp: now,
+        price: basePrice
+    });
+
+    // 과거 데이터 생성 (1부터 시작)
+    for (let i = 1; i < points; i++) {
         const timestamp = now - (i * interval);
-        const time = timestamp / 1000;
 
-        // 시간에 따라 변하는 가격 생성 (일관성 있는 추세)
-        const trend = Math.sin(time / 1000) * 20;
-        const wave = Math.sin(time / 100) * 5;
-        const noise = (Math.random() - 0.5) * 2;
-        const price = basePrice + trend + wave + noise;
+        // 변동성 설정
+        let volatility = 0.0005;
+        if (period === '1d' || period === '1w') {
+            volatility = 0.002;
+        }
 
-        data.push({
+        // lastPrice(미래 시점)에서 역산하여 과거 가격 추정
+        // price_future = price_past + change
+        // price_past = price_future - change
+        const change = lastPrice * volatility * (Math.random() - 0.5);
+        let price = lastPrice - change;
+
+        // 노이즈 추가
+        price += (Math.random() - 0.5) * (basePrice * 0.0002);
+
+        data.unshift({
             timestamp,
-            price: Math.round(price * 100) / 100,
+            price: Math.max(0, price),
         });
+
+        lastPrice = price;
     }
 
     return data;

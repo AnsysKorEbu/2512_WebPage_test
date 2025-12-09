@@ -1,127 +1,86 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="실시간 금값 차트 - 금 시세를 실시간으로 확인하세요">
-    <title>실시간 금값 차트</title>
+    <title>Project Dashboard</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
-        <!-- Header -->
+    <div class="background-orb orb-1"></div>
+    <div class="background-orb orb-2"></div>
+
+    <main class="container">
         <header class="header">
-            <div class="header-content">
-                <h1 class="logo">
-                    <span class="logo-icon">📊</span>
-                    <span class="logo-text">Gold Price Tracker</span>
-                </h1>
-                <div class="header-controls">
-                    <button id="refreshBtn" class="btn btn-secondary">
-                        <span class="btn-icon">🔄</span>
-                        <span>새로고침</span>
-                    </button>
-                </div>
-            </div>
+            <h1>My Projects</h1>
+            <p>Select a project to launch</p>
         </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Price Cards -->
-            <div class="price-cards">
-                <div class="price-card">
-                    <div class="price-card-header">
-                        <span class="price-label">현재가 (USD)</span>
-                        <span class="price-badge" id="priceChange">-</span>
-                    </div>
-                    <div class="price-value" id="currentPrice">
-                        <span class="loading-shimmer">Loading...</span>
-                    </div>
-                    <div class="price-footer">
-                        <span class="price-time" id="lastUpdate">-</span>
-                    </div>
+        <div class="grid">
+            <a href="expense/index.html" class="card">
+                <div class="card-icon">💰</div>
+                <div class="card-content">
+                    <h2>Expense Tracker</h2>
+                    <p>Manage your daily finances and track expenses.</p>
                 </div>
+                <div class="card-arrow">→</div>
+            </a>
 
-                <div class="price-card">
-                    <div class="price-card-header">
-                        <span class="price-label">24시간 고가</span>
-                    </div>
-                    <div class="price-value small" id="highPrice">
-                        <span class="loading-shimmer">-</span>
-                    </div>
+            <a href="game/index.html" class="card">
+                <div class="card-icon">🎮</div>
+                <div class="card-content">
+                    <h2>Game Hub</h2>
+                    <p>Classic web games like Snake and more.</p>
                 </div>
+                <div class="card-arrow">→</div>
+            </a>
 
-                <div class="price-card">
-                    <div class="price-card-header">
-                        <span class="price-label">24시간 저가</span>
-                    </div>
-                    <div class="price-value small" id="lowPrice">
-                        <span class="loading-shimmer">-</span>
-                    </div>
+            <a href="note/index.html" class="card">
+                <div class="card-icon">📝</div>
+                <div class="card-content">
+                    <h2>Note App</h2>
+                    <p>Capture your thoughts and ideas quickly.</p>
                 </div>
+                <div class="card-arrow">→</div>
+            </a>
 
-                <div class="price-card">
-                    <div class="price-card-header">
-                        <span class="price-label">거래량</span>
-                    </div>
-                    <div class="price-value small" id="volume">
-                        <span class="loading-shimmer">-</span>
-                    </div>
+            <a href="pomodoro/index.html" class="card">
+                <div class="card-icon">⏱️</div>
+                <div class="card-content">
+                    <h2>Pomodoro Timer</h2>
+                    <p>Boost productivity with focused work sessions.</p>
                 </div>
-            </div>
+                <div class="card-arrow">→</div>
+            </a>
 
-            <!-- Chart Container -->
-            <div class="chart-container">
-                <div class="chart-header">
-                    <h2>실시간 가격 차트</h2>
-                    <div class="chart-controls">
-                        <button class="time-btn active" data-period="1h">1시간</button>
-                        <button class="time-btn" data-period="4h">4시간</button>
-                        <button class="time-btn" data-period="1d">1일</button>
-                        <button class="time-btn" data-period="1w">1주</button>
-                    </div>
+            <a href="puzzle/index.html" class="card">
+                <div class="card-icon">🧩</div>
+                <div class="card-content">
+                    <h2>Puzzle Game</h2>
+                    <p>Challenge your mind with interactive puzzles.</p>
                 </div>
-                <div class="chart-wrapper">
-                    <canvas id="goldChart"></canvas>
-                </div>
-            </div>
+                <div class="card-arrow">→</div>
+            </a>
 
-            <!-- Status Bar -->
-            <div class="status-bar">
-                <div class="status-item">
-                    <span class="status-label">연결 상태:</span>
-                    <span class="status-indicator" id="connectionStatus">
-                        <span class="status-dot"></span>
-                        <span class="status-text">연결 중...</span>
-                    </span>
+            <a href="stock/index.html" class="card">
+                <div class="card-icon">📈</div>
+                <div class="card-content">
+                    <h2>Stock Dashboard</h2>
+                    <p>Real-time gold prices and market charts.</p>
                 </div>
-                <div class="status-item">
-                    <span class="status-label">다음 업데이트:</span>
-                    <span id="nextUpdate">-</span>
-                </div>
-            </div>
-        </main>
+                <div class="card-arrow">→</div>
+            </a>
+        </div>
+    </main>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <p>© 2025 Gold Price Tracker | 데이터 제공: 실시간 API</p>
-        </footer>
-    </div>
-
-    <!-- Scripts -->
-    <script type="module" src="js/config.js"></script>
-    <script type="module" src="js/utils.js"></script>
-    <script type="module" src="js/api.js"></script>
-    <script type="module" src="js/chart.js"></script>
-    <script type="module" src="js/main.js"></script>
+    <footer class="footer">
+        <p>© 2025 Project Dashboard</p>
+    </footer>
 </body>
 
 </html>

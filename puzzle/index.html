@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Game - 중독성 퍼즐 게임</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="game-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <h1 class="game-title">2048</h1>
+                <div class="score-container">
+                    <div class="score-box">
+                        <div class="score-label">점수</div>
+                        <div class="score-value" id="currentScore">0</div>
+                    </div>
+                    <div class="score-box best">
+                        <div class="score-label">최고</div>
+                        <div class="score-value" id="bestScore">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-bottom">
+                <p class="game-description">
+                    방향키로 타일을 움직여 <strong>2048</strong>을 만드세요!
+                </p>
+                <div class="button-group">
+                    <button class="btn-new-game" id="newGameBtn">새 게임</button>
+                    <button class="btn-undo" id="undoBtn" disabled>↶ 되돌리기</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Game Container -->
+        <div class="game-container">
+            <!-- Grid Background -->
+            <div class="grid-container">
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </div>
+
+            <!-- Tiles Container -->
+            <div class="tile-container" id="tileContainer">
+                <!-- Tiles will be inserted here dynamically -->
+            </div>
+
+            <!-- Game Over Overlay -->
+            <div class="game-over-overlay hidden" id="gameOverOverlay">
+                <div class="overlay-content">
+                    <h2>게임 오버!</h2>
+                    <p class="final-score">최종 점수: <span id="finalScore">0</span></p>
+                    <button class="btn-try-again" id="tryAgainBtn">다시 하기</button>
+                </div>
+            </div>
+
+            <!-- Win Overlay -->
+            <div class="win-overlay hidden" id="winOverlay">
+                <div class="overlay-content">
+                    <h2>🎉 축하합니다!</h2>
+                    <p>2048 타일을 만들었습니다!</p>
+                    <div class="win-buttons">
+                        <button class="btn-continue" id="continueBtn">계속하기</button>
+                        <button class="btn-try-again" id="winTryAgainBtn">새 게임</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Side Panel -->
+        <aside class="side-panel">
+            <!-- Instructions -->
+            <div class="panel-card">
+                <h3>🎮 게임 방법</h3>
+                <div class="instructions">
+                    <div class="instruction-item">
+                        <div class="keys">
+                            <span class="key">↑</span>
+                            <span class="key">↓</span>
+                            <span class="key">←</span>
+                            <span class="key">→</span>
+                        </div>
+                        <p>방향키로 타일 이동</p>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="mobile-hint">📱 모바일에서는 스와이프!</div>
+                    </div>
+                </div>
+                <div class="rules">
+                    <h4>규칙</h4>
+                    <ul>
+                        <li>같은 숫자끼리 합쳐집니다</li>
+                        <li>2 + 2 = 4, 4 + 4 = 8...</li>
+                        <li>2048을 만들면 승리!</li>
+                        <li>움직일 곳이 없으면 게임 오버</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="panel-card">
+                <h3>📊 통계</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">현재 게임</span>
+                        <span class="stat-value" id="movesCount">0</span>
+                        <span class="stat-unit">회 이동</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">최대 타일</span>
+                        <span class="stat-value" id="maxTile">2</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">총 게임 수</span>
+                        <span class="stat-value" id="gamesPlayed">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">승리 횟수</span>
+                        <span class="stat-value" id="gamesWon">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="panel-card">
+                <h3>🏆 도전 과제</h3>
+                <div class="achievements" id="achievements">
+                    <div class="achievement locked" data-achievement="first-win">
+                        <span class="achievement-icon">🎯</span>
+                        <div class="achievement-info">
+                            <div class="achievement-name">첫 승리</div>
+                            <div class="achievement-desc">2048 타일 만들기</div>
+                        </div>
+                    </div>
+                    <div class="achievement locked" data-achievement="speed-demon">
+                        <span class="achievement-icon">⚡</span>
+                        <div class="achievement-info">
+                            <div class="achievement-name">스피드 데몬</div>
+                            <div class="achievement-desc">100회 이하 이동으로 승리</div>
+                        </div>
+                    </div>
+                    <div class="achievement locked" data-achievement="high-roller">
+                        <span class="achievement-icon">💎</span>
+                        <div class="achievement-info">
+                            <div class="achievement-name">하이 롤러</div>
+                            <div class="achievement-desc">4096 타일 만들기</div>
+                        </div>
+                    </div>
+                    <div class="achievement locked" data-achievement="survivor">
+                        <span class="achievement-icon">🛡️</span>
+                        <div class="achievement-info">
+                            <div class="achievement-name">생존왕</div>
+                            <div class="achievement-desc">500회 이상 이동하기</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="panel-card">
+                <h3>⚙️ 설정</h3>
+                <div class="settings">
+                    <label class="setting-item">
+                        <input type="checkbox" id="animationsToggle" checked>
+                        <span>애니메이션</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span>효과음</span>
+                    </label>
+                    <button class="btn-reset" id="resetDataBtn">통계 초기화</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script type="module" src="js/game.js"></script>
+</body>
+
+</html>

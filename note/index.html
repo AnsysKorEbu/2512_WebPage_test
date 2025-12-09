@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Notes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-profile">
+                    <span class="user-icon">👤</span>
+                    <span class="user-name">내 워크스페이스</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <div class="sidebar-menu">
+                    <div class="menu-label">데이터 관리</div>
+                    <div class="data-controls">
+                        <button id="saveFileBtn" class="action-btn">💾 저장하기</button>
+                        <button id="loadFileBtn" class="action-btn">📂 불러오기</button>
+                        <input type="file" id="fileInput" accept=".json" style="display: none;">
+                    </div>
+
+                    <div class="menu-label">페이지</div>
+                    <ul id="pageList" class="page-list">
+                        <!-- Page items will be added here -->
+                    </ul>
+                    <button id="newPageBtn" class="new-page-btn">
+                        <span class="icon">+</span> 페이지 추가
+                    </button>
+                </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="editor-container">
+                <div class="cover-image" style="display: none;"></div>
+                <div class="page-icon" id="pageIcon">📄</div>
+
+                <div class="editor-header">
+                    <input type="text" id="pageTitle" class="page-title-input" placeholder="제목 없음" autocomplete="off">
+                </div>
+
+                <div id="editor" class="editor-body">
+                    <!-- Blocks will be added here -->
+                    <div class="block" contenteditable="true" placeholder="명령어를 사용하려면 '/'를 입력하세요"></div>
+                </div>
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">📝</div>
+                <h3>페이지를 선택하거나 새로 만드세요</h3>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

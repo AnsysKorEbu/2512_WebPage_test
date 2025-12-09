@@ -47,7 +47,7 @@ export function initChart(canvasId, initialData = []) {
         data: {
             labels: labels,
             datasets: [{
-                label: '금 가격 (USD)',
+                label: '금 가격 (USD/g)',
                 data: prices,
                 borderColor: CONFIG.CHART.COLORS.line,
                 backgroundColor: createGradient(ctx),
@@ -150,7 +150,7 @@ function getChartOptions() {
                 ticks: {
                     color: CONFIG.CHART.COLORS.text,
                     callback: function (value) {
-                        return formatCurrency(value, 'USD', 0);
+                        return formatCurrency(value, 'USD', 2);
                     },
                 },
                 grid: {
